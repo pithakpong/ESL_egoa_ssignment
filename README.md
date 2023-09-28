@@ -82,7 +82,7 @@ Specify the license under which your project is distributed.
 ![Image 2](https://github.com/pithakpong/ESL_egoa_ssignment/blob/main/esp.jpg)
 *esp control led on / led off*
 
-![Image 3]([images/image3.png](https://github.com/pithakpong/ESL_egoa_ssignment/blob/main/mqtt.png))
+![Image 3]([images/image3.png](https://github.com/pithakpong/ESL_egoa_ssignment/blob/main/mqtt.png)
 *mqtt server*
 
 ![Image 4](https://github.com/pithakpong/ESL_egoa_ssignment/blob/main/ledcontrol.png)
