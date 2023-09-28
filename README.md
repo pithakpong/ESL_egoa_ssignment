@@ -1,4 +1,4 @@
-# ESL_egoproject
+## ESL_egoproject
 
 Brief project description or a catchy project slogan.
 
