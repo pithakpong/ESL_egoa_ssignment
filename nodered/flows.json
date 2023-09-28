@@ -1,0 +1,646 @@
+[
+    {
+        "id": "b80eb76d27d6722c",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "a2b3b9abb1187844",
+        "type": "inject",
+        "z": "b80eb76d27d6722c",
+        "name": "create database table",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "CREATE TABLE RANDOMNUM( TIMESTAMP INT PRIMARY KEY NOT NULL, VALUE INT NOT NULL,VALUE2 INT NOT NULL)",
+        "payload": "",
+        "payloadType": "date",
+        "x": 320,
+        "y": 180,
+        "wires": [
+            [
+                "ed58a1cacf8cdda0"
+            ]
+        ]
+    },
+    {
+        "id": "ed58a1cacf8cdda0",
+        "type": "sqlite",
+        "z": "b80eb76d27d6722c",
+        "mydb": "79f45c23fb953af4",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "testDB",
+        "x": 750,
+        "y": 260,
+        "wires": [
+            [
+                "b46e977973876628"
+            ]
+        ]
+    },
+    {
+        "id": "b46e977973876628",
+        "type": "debug",
+        "z": "b80eb76d27d6722c",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "0978d4632b828f53",
+        "type": "function",
+        "z": "b80eb76d27d6722c",
+        "name": "write query",
+        "func": "var TIMESTAMP = msg.payload.sensor1;\nvar VALUE = msg.payload.sensor2;\nvar VALUE2 = msg.payload.sensor3;\nvar newMsg = {\n    \"topic\": \"INSERT INTO RANDOMNUM VALUES ( \" + TIMESTAMP + \", \" + VALUE +  \" )\"\n}\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 280,
+        "wires": [
+            [
+                "ed58a1cacf8cdda0"
+            ]
+        ]
+    },
+    {
+        "id": "391627fe52a3cf0f",
+        "type": "inject",
+        "z": "b80eb76d27d6722c",
+        "name": "View records",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "SELECT * FROM RANDOMNUM ORDER BY TIMESTAMP DESC LIMIT 100;",
+        "payload": "",
+        "payloadType": "date",
+        "x": 480,
+        "y": 380,
+        "wires": [
+            [
+                "ad44d3da68ad42fa"
+            ]
+        ]
+    },
+    {
+        "id": "85ce0e8c41d48a86",
+        "type": "inject",
+        "z": "b80eb76d27d6722c",
+        "name": "delete",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "DELETE FROM RANDOMNUM WHERE TIMESTAMP <= strftime('%s','now', '-1 hours')*1000",
+        "payload": "",
+        "payloadType": "date",
+        "x": 480,
+        "y": 440,
+        "wires": [
+            [
+                "ed58a1cacf8cdda0"
+            ]
+        ]
+    },
+    {
+        "id": "b02caad30c78e085",
+        "type": "inject",
+        "z": "b80eb76d27d6722c",
+        "name": "show counts",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "SELECT COUNT(*) FROM RANDOMNUM",
+        "payload": "",
+        "payloadType": "date",
+        "x": 490,
+        "y": 340,
+        "wires": [
+            [
+                "ed58a1cacf8cdda0"
+            ]
+        ]
+    },
+    {
+        "id": "ad44d3da68ad42fa",
+        "type": "sqlite",
+        "z": "b80eb76d27d6722c",
+        "mydb": "79f45c23fb953af4",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "testDB",
+        "x": 710,
+        "y": 380,
+        "wires": [
+            [
+                "b3d0d184f3d61588",
+                "55bbed4d4f0d935e",
+                "9a43f4f6177b1e26"
+            ]
+        ]
+    },
+    {
+        "id": "b3d0d184f3d61588",
+        "type": "ui_template",
+        "z": "b80eb76d27d6722c",
+        "group": "d5ab39db4876cdf6",
+        "name": "UI table",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "format": "<table style=\"width:100%\">\n    <tr>\n        <th>Index</th>\n        <th>Timestamp</th>\n        <th>Value</th>\n    </tr>\n    <tr ng-repeat=\"x in msg.payload\">\n        <td>{{$index}}</td>\n        <td>{{x.TIMESTAMP}}</td>\n        <td>{{x.VALUE}}</td>\n    </tr>\n</table>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 940,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "34cf7b23b3b38ce3",
+        "type": "http in",
+        "z": "b80eb76d27d6722c",
+        "name": "sensor",
+        "url": "/sensor-data",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 310,
+        "y": 260,
+        "wires": [
+            [
+                "0978d4632b828f53",
+                "c30e810f6e5c0f30",
+                "e0d9e47e6642f8bc",
+                "26c14761b9c869fa"
+            ]
+        ]
+    },
+    {
+        "id": "55bbed4d4f0d935e",
+        "type": "debug",
+        "z": "b80eb76d27d6722c",
+        "d": true,
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "dd566ff92fd4c33e",
+        "type": "inject",
+        "z": "b80eb76d27d6722c",
+        "name": "create database table2",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "CREATE TABLE RANDOM( TIMESTAMP INT PRIMARY KEY NOT NULL, VALUE INT NOT NULL, VALUE2 INT NOT NULL)",
+        "payload": "",
+        "payloadType": "date",
+        "x": 420,
+        "y": 40,
+        "wires": [
+            [
+                "1467342cb2ba1a66"
+            ]
+        ]
+    },
+    {
+        "id": "1467342cb2ba1a66",
+        "type": "sqlite",
+        "z": "b80eb76d27d6722c",
+        "mydb": "79f45c23fb953af4",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "testDB2",
+        "x": 820,
+        "y": 80,
+        "wires": [
+            [
+                "b46e977973876628"
+            ]
+        ]
+    },
+    {
+        "id": "c30e810f6e5c0f30",
+        "type": "function",
+        "z": "b80eb76d27d6722c",
+        "name": "write query2",
+        "func": "var TIMESTAMP = msg.payload.sensor1;\nvar VALUE = msg.payload.sensor2;\nvar VALUE2 = msg.payload.sensor3;\nvar newMsg = {\n    \"topic\": \"INSERT INTO RANDOM VALUES ( \" + TIMESTAMP + \", \" + VALUE2 + \" )\"\n}\nreturn newMsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 100,
+        "wires": [
+            [
+                "1467342cb2ba1a66"
+            ]
+        ]
+    },
+    {
+        "id": "5c9671b5378f100f",
+        "type": "sqlite",
+        "z": "b80eb76d27d6722c",
+        "mydb": "79f45c23fb953af4",
+        "sqlquery": "msg.topic",
+        "sql": "",
+        "name": "testDB2",
+        "x": 740,
+        "y": 480,
+        "wires": [
+            [
+                "483c88d605129685",
+                "39f2f734a0c49e8e"
+            ]
+        ]
+    },
+    {
+        "id": "483c88d605129685",
+        "type": "ui_template",
+        "z": "b80eb76d27d6722c",
+        "group": "ce8a87a8ccafab97",
+        "name": "UI table2",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "format": "<table style=\"width:100%\">\n    <tr>\n        <th>Index</th>\n        <th>Timestamp</th>\n        <th>Value</th>\n    </tr>\n    <tr ng-repeat=\"x in msg.payload\">\n        <td>{{$index}}</td>\n        <td>{{x.TIMESTAMP}}</td>\n        <td>{{x.VALUE}}</td>\n    </tr>\n</table>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 940,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c291125069356abf",
+        "type": "inject",
+        "z": "b80eb76d27d6722c",
+        "name": "show counts2",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "SELECT COUNT(*) FROM RANDOM",
+        "payload": "",
+        "payloadType": "date",
+        "x": 610,
+        "y": 160,
+        "wires": [
+            [
+                "1467342cb2ba1a66"
+            ]
+        ]
+    },
+    {
+        "id": "484d81f3130cfd0f",
+        "type": "inject",
+        "z": "b80eb76d27d6722c",
+        "name": "delete2",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "DELETE FROM RANDOM WHERE TIMESTAMP <= strftime('%s','now', '-1 hours')*1000",
+        "payload": "",
+        "payloadType": "date",
+        "x": 580,
+        "y": 220,
+        "wires": [
+            [
+                "1467342cb2ba1a66"
+            ]
+        ]
+    },
+    {
+        "id": "c94707b98aef924a",
+        "type": "inject",
+        "z": "b80eb76d27d6722c",
+        "name": "View records2",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "SELECT * FROM RANDOM ORDER BY TIMESTAMP DESC LIMIT 100;",
+        "payload": "",
+        "payloadType": "date",
+        "x": 500,
+        "y": 500,
+        "wires": [
+            [
+                "5c9671b5378f100f"
+            ]
+        ]
+    },
+    {
+        "id": "e0d9e47e6642f8bc",
+        "type": "function",
+        "z": "b80eb76d27d6722c",
+        "name": "gat_value1",
+        "func": "var x = msg.payload.sensor2;\nmsg.payload = x;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 220,
+        "wires": [
+            [
+                "a24015d2931186a5"
+            ]
+        ]
+    },
+    {
+        "id": "26c14761b9c869fa",
+        "type": "function",
+        "z": "b80eb76d27d6722c",
+        "name": "gate_value2",
+        "func": "var x = msg.payload.sensor3;\nmsg.payload = x;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1050,
+        "y": 280,
+        "wires": [
+            [
+                "e005261a824dfcea"
+            ]
+        ]
+    },
+    {
+        "id": "a24015d2931186a5",
+        "type": "ui_gauge",
+        "z": "b80eb76d27d6722c",
+        "name": "",
+        "group": "d5ab39db4876cdf6",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "gauge",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "200",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 1250,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "e005261a824dfcea",
+        "type": "ui_gauge",
+        "z": "b80eb76d27d6722c",
+        "name": "",
+        "group": "ce8a87a8ccafab97",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "gauge",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "200",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 1250,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "39f2f734a0c49e8e",
+        "type": "function",
+        "z": "b80eb76d27d6722c",
+        "name": "average2",
+        "func": "var sum = 0;\nvar count = 0;\n\nfor (var i = 0; i < msg.payload.length; i++) {\n    sum += msg.payload[i].VALUE;\n    count++;\n}\n\nvar average = sum / count;\n\nmsg.payload = average;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 580,
+        "wires": [
+            [
+                "d20264b83bf985d3"
+            ]
+        ]
+    },
+    {
+        "id": "d20264b83bf985d3",
+        "type": "ui_text",
+        "z": "b80eb76d27d6722c",
+        "group": "ce8a87a8ccafab97",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "text2",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 1070,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "9a43f4f6177b1e26",
+        "type": "function",
+        "z": "b80eb76d27d6722c",
+        "name": "average1",
+        "func": "var sum = 0;\nvar count = 0;\n\nfor (var i = 0; i < msg.payload.length; i++) {\n    sum += msg.payload[i].VALUE;\n    count++;\n}\n\nvar average = sum / count;\n\nmsg.payload = average;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1100,
+        "y": 380,
+        "wires": [
+            [
+                "9c7ec6dbf8ad7e92"
+            ]
+        ]
+    },
+    {
+        "id": "9c7ec6dbf8ad7e92",
+        "type": "ui_text",
+        "z": "b80eb76d27d6722c",
+        "group": "d5ab39db4876cdf6",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "text1",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 1310,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "79f45c23fb953af4",
+        "type": "sqlitedb",
+        "db": "C:\\Users\\HP\\Desktop\\esl_entrance\\testDB2.db",
+        "mode": "RWC"
+    },
+    {
+        "id": "d5ab39db4876cdf6",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "e76fbf78fb308c21",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ce8a87a8ccafab97",
+        "type": "ui_group",
+        "name": "test",
+        "tab": "e76fbf78fb308c21",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e76fbf78fb308c21",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
