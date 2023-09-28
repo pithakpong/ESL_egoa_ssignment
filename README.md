@@ -76,3 +76,14 @@ Explain how others can contribute to your project if you're open to contribution
 ## License
 
 Specify the license under which your project is distributed.
+![Image 1](https://github.com/pithakpong/ESL_egoa_ssignment/blob/main/ui.png)
+*show humility and temperature*
+
+![Image 2](https://github.com/pithakpong/ESL_egoa_ssignment/blob/main/esp.jpg)
+*esp control led on / led off*
+
+![Image 3]([images/image3.png](https://github.com/pithakpong/ESL_egoa_ssignment/blob/main/mqtt.png))
+*mqtt server*
+
+![Image 4](https://github.com/pithakpong/ESL_egoa_ssignment/blob/main/ledcontrol.png)
+*button control led dashboard*
